@@ -55,13 +55,9 @@ RUN groupadd -r appuser && useradd -r -g appuser appuser
 WORKDIR /app
 
 # Copy application files
-COPY app.py .
-COPY start_api.py .
-COPY api_config.py .
-COPY generate_facture.py .
-COPY facture_template.html .
-COPY logo.png .
+COPY src/ ./src/
 COPY config.json .
+COPY requirements.txt .
 
 # Create necessary directories
 RUN mkdir -p /app/logs /app/temp
@@ -80,4 +76,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:6000/health || exit 1
 
 # Default command
-CMD ["python3", "start_api.py"]
+CMD ["python3", "main.py"]

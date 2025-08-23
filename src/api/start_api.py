@@ -8,7 +8,10 @@ import os
 import sys
 import signal
 import time
-from app import app, generator
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+from src.api.app import app, generator
 
 def signal_handler(sig, frame):
     """Handle shutdown signals gracefully."""
@@ -39,7 +42,8 @@ def main():
     print("📋 Available endpoints:")
     print("  GET  /health                    - Health check")
     print("  POST /api/factures/generate     - Generate single facture")
-    print("  GET /api/factures/generate-batch - Generate batch factures")
+    print("  GET /api/factures/generate-batch/<id> - Generate single facture by ID")
+    print("  GET /api/factures/generate-batch      - Generate all factures in batch")
     print("  GET  /api/factures/status       - Get factures status")
     print("  GET  /api/factures/<id>         - Get facture details")
     print("  GET  /api/statistics            - Get statistics")

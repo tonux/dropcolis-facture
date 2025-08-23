@@ -17,7 +17,10 @@ def test_flask_app():
     
     try:
         # Import the app
-        from app import app, generator
+        import sys
+        import os
+        sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+        from api.app import app, generator
         
         print("✓ Flask app imported successfully")
         print(f"✓ App name: {app.name}")

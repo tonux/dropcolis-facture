@@ -88,7 +88,7 @@ def test_api_response_format():
     print("\nTesting template rendering...")
     
     try:
-        with open('facture_template.html', 'r', encoding='utf-8') as f:
+        with open('src/templates/facture_template.html', 'r', encoding='utf-8') as f:
             template_content = f.read()
         
         template = Template(template_content)

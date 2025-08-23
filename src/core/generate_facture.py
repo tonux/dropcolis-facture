@@ -40,7 +40,7 @@ class FactureGenerator:
         with open(self.template_path, 'r', encoding='utf-8') as f:
             self.template = Template(f.read())
     
-    def retrieve_factures(self) -> List[Dict[str, Any]]:
+    def retrieve_factures(self, id: Optional[str] = None) -> List[Dict[str, Any]]:
         """
         Retrieve facture data from Dropcolis API.
         
@@ -56,7 +56,14 @@ class FactureGenerator:
                 'Authorization': f'Bearer {self.directus_token}'
             }
             
-            response = requests.get(
+            if id:
+                response = requests.get(
+                    f"{self.dropcolis_api_url}/items/Factures?filter[id][_eq]={id}&fields=id,status,montant,montant_ttc,devise,mode_paiement,date_validite,date_emission,client.*,lignes.*",
+                    headers=headers,
+                    timeout=30
+                )
+            else:
+                response = requests.get(
                 f"{self.dropcolis_api_url}/items/Factures?filter[status][_eq]=A_PAYER&fields=id,status,montant,montant_ttc,devise,mode_paiement,date_validite,date_emission,client.*,lignes.*",
                 headers=headers,
                 timeout=30
@@ -279,7 +286,7 @@ class FactureGenerator:
         except Exception as e:
             logger.warning(f"Could not clean up temporary file {pdf_path}: {e}")
     
-    def process_factures(self) -> Dict[str, int]:
+    def process_factures(self, id: Optional[str] = None) -> Dict[str, int]:
         """
         Main method to process all factures: retrieve, generate PDFs, and send to Directus.
         
@@ -295,7 +302,7 @@ class FactureGenerator:
         
         try:
             # Retrieve factures
-            factures = self.retrieve_factures()
+            factures = self.retrieve_factures(id)
             stats['total_factures'] = len(factures)
             
             if not factures:

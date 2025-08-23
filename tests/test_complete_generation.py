@@ -11,7 +11,10 @@ from datetime import datetime
 # Add the current directory to Python path to import the module
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from generate_facture import FactureGenerator
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+from core.generate_facture import FactureGenerator
 
 def test_complete_generation():
     """Test the complete facture generation process."""
@@ -54,7 +57,7 @@ def test_complete_generation():
         "dropcolis_api_url": "https://services.dropcolis.ca",
         "directus_api_url": "https://services.dropcolis.ca",
         "directus_token": "test-token",
-        "template_path": "facture_template.html"
+        "template_path": "src/templates/facture_template.html"
     }
     
     try:

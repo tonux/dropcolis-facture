@@ -9,7 +9,10 @@ import os
 import tempfile
 import logging
 from datetime import datetime
-from generate_facture import FactureGenerator, load_config
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+from src.core.generate_facture import FactureGenerator, load_config
 
 # Configure logging
 logging.basicConfig(
@@ -124,15 +127,35 @@ def generate_facture():
         logger.error(f"Error generating facture: {e}")
         return jsonify({'error': str(e)}), 500
 
-@app.route('/api/factures/generate-batch', methods=['GET'])
-def generate_factures_batch():
+@app.route('/api/factures/generate-batch/<id>', methods=['GET'])
+def generate_factures_batch(id):
     """
-    Generate multiple factures from API data.
+    Generate a single facture by ID.
     
-    Expected JSON payload:
-    {
-        "filter_status": "A_PAYER"  # Optional: filter by status
-    }
+    URL parameter:
+    - id: The facture ID to process
+    """
+    if not generator:
+        return jsonify({'error': 'Generator not initialized'}), 500
+    
+    try:
+        # Process single facture by ID
+        stats = generator.process_factures(id)
+        
+        return jsonify({
+            'message': f'Facture {id} processed successfully',
+            'statistics': stats,
+            'timestamp': datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        logger.error(f"Error in facture generation: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/factures/generate-batch', methods=['GET'])
+def generate_factures_batch_all():
+    """
+    Generate all factures in batch mode.
     """
     if not generator:
         return jsonify({'error': 'Generator not initialized'}), 500
