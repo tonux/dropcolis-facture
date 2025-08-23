@@ -79,12 +79,15 @@ def test_complete_generation():
         
         # Test template variable preparation
         template_vars = {
+            'current_date': datetime.now().strftime('%Y'),
             'facture_number': facture_data.get('id', facture_data.get('numero', 'N/A')),
             'date': generator.format_date(facture_data.get('date_emission')),
             'valid_until': generator.format_date(facture_data.get('date_validite')),
-            'client_id': facture_data.get('client', {}).get('id', '---------'),
-            'client_name': facture_data.get('client', {}).get('first_name', 'N/A'),
-            'client_location': facture_data.get('client', {}).get('location', 'N/A'),
+            'client': {
+                'first_name': facture_data.get('client', {}).get('first_name', 'N/A'),
+                'last_name': facture_data.get('client', {}).get('last_name', ''),
+                'location': facture_data.get('client', {}).get('location', 'N/A')
+            },
             'items': facture_data.get('lignes', []),
             'subtotal': 0,
             'tps': 0,
@@ -96,9 +99,8 @@ def test_complete_generation():
         print(f"  Facture Number: {template_vars['facture_number']}")
         print(f"  Date: {template_vars['date']}")
         print(f"  Valid Until: {template_vars['valid_until']}")
-        print(f"  Client ID: {template_vars['client_id']}")
-        print(f"  Client Name: {template_vars['client_name']}")
-        print(f"  Client Location: {template_vars['client_location']}")
+        print(f"  Client Name: {template_vars['client']['first_name']}")
+        print(f"  Client Location: {template_vars['client']['location']}")
         
         # Test template rendering
         print(f"\nTesting template rendering...")
@@ -119,7 +121,7 @@ def test_complete_generation():
             else:
                 print("✗ Formatted validite date not found in HTML")
             
-            if template_vars['client_name'] in rendered_html:
+            if template_vars['client']['first_name'] in rendered_html:
                 print("✓ Client name found in HTML")
             else:
                 print("✗ Client name not found in HTML")

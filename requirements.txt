@@ -4,3 +4,4 @@ weasyprint>=60.1
 Pillow>=10.0.0
 cairocffi>=0.9.0
 cffi>=1.15.1
+flask>=3.0.0

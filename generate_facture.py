@@ -57,7 +57,7 @@ class FactureGenerator:
             }
             
             response = requests.get(
-                f"{self.dropcolis_api_url}/items/Factures?fields=id,status,montant,montant_ttc,devise,mode_paiement,date_validite,date_emission,client.*,lignes.*",
+                f"{self.dropcolis_api_url}/items/Factures?filter[status][_eq]=A_PAYER&fields=id,status,montant,montant_ttc,devise,mode_paiement,date_validite,date_emission,client.*,lignes.*",
                 headers=headers,
                 timeout=30
             )
@@ -128,7 +128,7 @@ class FactureGenerator:
         
         return tps, tvq, grand_total
     
-    def generate_pdf(self, facture_data: Dict[str, Any]) -> Optional[str]:
+    def generate_pdf(self, facture_data: Dict[str, Any]) -> Optional[tuple]:
         """
         Generate PDF from HTML template using facture data.
         
@@ -136,7 +136,7 @@ class FactureGenerator:
             facture_data: Dictionary containing facture information
             
         Returns:
-            Path to generated PDF file or None if failed
+            Tuple containing (pdf_path, grand_total, subtotal) or None if failed
         """
         try:
             logger.info(f"Generating PDF for facture {facture_data.get('id', 'unknown')}")
@@ -154,7 +154,8 @@ class FactureGenerator:
                 'subtotal': 0,
                 'tps': 0,
                 'tvq': 0,
-                'grand_total': 0
+                'grand_total': 0,
+                'status': facture_data.get('status', 'N/A')
             }
             
             # Calculate totals
@@ -181,13 +182,13 @@ class FactureGenerator:
             HTML(string=html_content).write_pdf(pdf_path)
             
             logger.info(f"PDF generated successfully: {pdf_path}")
-            return pdf_path
+            return pdf_path, grand_total, subtotal
             
         except Exception as e:
             logger.error(f"Error generating PDF: {e}")
             return None
     
-    def send_to_directus(self, pdf_path: str, facture_data: Dict[str, Any]) -> bool:
+    def send_to_directus(self, pdf_path: str, facture_data: Dict[str, Any], grand_total: float, subtotal: float) -> bool:
         """
         Send PDF file to Directus via POST /import endpoint.
         
@@ -200,7 +201,7 @@ class FactureGenerator:
         """
         try:
             logger.info(f"Sending PDF to Directus for facture {facture_data.get('id', 'unknown')}")
-            
+            current_date = datetime.now().strftime('%Y-%m-%d')
             # Prepare file for upload
             with open(pdf_path, 'rb') as pdf_file:
                 files = {
@@ -210,12 +211,13 @@ class FactureGenerator:
                 # Prepare metadata
                 data = {
                     'collection': 'factures_pdf',
-                    'filename_download': f"facture_{facture_data.get('id', 'unknown')}.pdf",
-                    'title': f"Facture {facture_data.get('id', 'unknown')}",
-                    'description': f"PDF généré pour la facture {facture_data.get('id', 'unknown')}",
+                    'filename_download': f"facture_{current_date}-{facture_data.get('id', 'unknown')}.pdf",
+                    'title': f"Facture n°{current_date}-{facture_data.get('id', 'unknown')}",
+                    'description': f"PDF généré pour la facture n°{current_date}-{facture_data.get('id', 'unknown')}",
                     'facture_id': str(facture_data.get('id', '')),
                     'client_nom': facture_data.get('client', {}).get('first_name', ''),
-                    'date_generation': datetime.now().isoformat()
+                    'date_generation': datetime.now().isoformat(),
+                    'folder': 'c571fa44-dc5d-4173-9c3e-de62e12ace2e'
                 }
                 
                 headers = {
@@ -232,7 +234,24 @@ class FactureGenerator:
                 )
                 
                 if response.status_code in [200, 201]:
+                    # Extract the file id from the response
+                    file_id = response.json().get('data', {}).get('id')
+                    logger.info(f"Directus file id: {file_id}")
                     logger.info(f"PDF successfully sent to Directus")
+
+                    # update the facture with the file id
+                    response = requests.patch(
+                        f"{self.directus_api_url}/items/Factures/{facture_data.get('id', '')}",
+                        json={'file': file_id, 'montant_ttc': grand_total, 'montant': subtotal},
+                        headers=headers,
+                        timeout=60
+                    )
+                    if response.status_code == 200:
+                        logger.info(f"Facture {facture_data.get('id', '')} updated with file id {file_id}")
+                    else:
+                        logger.error(f"Failed to update facture {facture_data.get('id', '')} with file id {file_id}")
+                        return False
+
                     return True
                 else:
                     logger.error(f"Failed to send PDF to Directus. Status: {response.status_code}")
@@ -286,14 +305,17 @@ class FactureGenerator:
             # Process each facture
             for facture in factures:
                 try:
-                    print(facture)
                     # Generate PDF
-                    pdf_path = self.generate_pdf(facture)
-                    if pdf_path:
+                    result = self.generate_pdf(facture)
+                    if result:
+                        pdf_path, grand_total, subtotal = result
                         stats['successful_pdfs'] += 1
                         
+                        # Log the totals
+                        logger.info(f"Facture {facture.get('id', 'unknown')} - Subtotal: {subtotal}$, Grand Total: {grand_total}$")
+                        
                         # Send to Directus
-                        if self.send_to_directus(pdf_path, facture):
+                        if self.send_to_directus(pdf_path, facture, grand_total, subtotal):
                             stats['successful_uploads'] += 1
                             logger.info(f"Successfully processed facture {facture.get('id', 'unknown')}")
                         else:

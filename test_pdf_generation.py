@@ -68,13 +68,16 @@ def test_pdf_generation():
         print(f"Client: {facture_data.get('client', {}).get('first_name')}")
         
         # Generate PDF
-        pdf_path = generator.generate_pdf(facture_data)
+        result = generator.generate_pdf(facture_data)
         
-        if pdf_path and os.path.exists(pdf_path):
+        if result:
+            pdf_path, grand_total, subtotal = result
             file_size = os.path.getsize(pdf_path)
             print(f"✓ PDF generated successfully!")
             print(f"  File path: {pdf_path}")
             print(f"  File size: {file_size} bytes")
+            print(f"  Subtotal: {subtotal}$")
+            print(f"  Grand Total: {grand_total}$")
             
             # Clean up the temporary file
             generator.cleanup_temp_file(pdf_path)
