@@ -52,11 +52,12 @@ class FactureGenerator:
             
             headers = {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json'
+                'Accept': 'application/json',
+                'Authorization': f'Bearer {self.directus_token}'
             }
             
             response = requests.get(
-                f"{self.dropcolis_api_url}/items/Factures?fields=*.*",
+                f"{self.dropcolis_api_url}/items/Factures?fields=id,status,montant,montant_ttc,devise,mode_paiement,date_validite,date_emission,client.*,lignes.*",
                 headers=headers,
                 timeout=30
             )
@@ -77,6 +78,36 @@ class FactureGenerator:
         except Exception as e:
             logger.error(f"Unexpected error retrieving factures: {e}")
             return []
+    
+    def format_date(self, date_string: str) -> str:
+        """
+        Format date string from ISO format to French format.
+        
+        Args:
+            date_string: Date string in ISO format (e.g., "2025-08-23T12:00:00")
+            
+        Returns:
+            Formatted date string (e.g., "23/08/2025")
+        """
+        if not date_string or date_string == 'N/A':
+            return 'N/A'
+        
+        try:
+            # Parse ISO date string
+            if 'T' in date_string:
+                # Remove time part if present
+                date_part = date_string.split('T')[0]
+            else:
+                date_part = date_string
+            
+            # Parse the date
+            parsed_date = datetime.strptime(date_part, '%Y-%m-%d')
+            
+            # Format to French date format
+            return parsed_date.strftime('%d/%m/%Y')
+        except (ValueError, TypeError):
+            # If parsing fails, return original string
+            return date_string
     
     def calculate_taxes(self, subtotal: float) -> tuple:
         """
@@ -110,14 +141,15 @@ class FactureGenerator:
         try:
             logger.info(f"Generating PDF for facture {facture_data.get('id', 'unknown')}")
             
+            
+            current_date = datetime.now().strftime('%Y-%m-%d')
             # Prepare template variables
             template_vars = {
+                'current_date': current_date,
                 'facture_number': facture_data.get('id', facture_data.get('numero', 'N/A')),
-                'date': facture_data.get('date_emission', datetime.now().strftime('%d/%m/%Y')),
-                'valid_until': facture_data.get('date_validite', 'N/A'),
-                'client_id': facture_data.get('client', {}).get('id', '---------'),
-                'client_name': facture_data.get('client', {}).get('first_name', 'N/A'),
-                'client_location': facture_data.get('client', {}).get('location', 'N/A'),
+                'date': self.format_date(facture_data.get('date_emission')),
+                'valid_until': self.format_date(facture_data.get('date_validite')),
+                'client': facture_data.get('client', {}),
                 'items': facture_data.get('lignes', []),
                 'subtotal': 0,
                 'tps': 0,
@@ -254,6 +286,7 @@ class FactureGenerator:
             # Process each facture
             for facture in factures:
                 try:
+                    print(facture)
                     # Generate PDF
                     pdf_path = self.generate_pdf(facture)
                     if pdf_path:
