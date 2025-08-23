@@ -1,0 +1,6 @@
+{
+  "dropcolis_api_url": "https://services.dropcolis.ca",
+  "directus_api_url": "https://services.dropcolis.ca",
+  "directus_token": "PTA8bdAqSXXrsYAku_JrFEjj2o3ijhIW",
+  "template_path": "facture_template.html"
+}
