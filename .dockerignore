@@ -1,0 +1,74 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env
+pip-log.txt
+pip-delete-this-directory.txt
+.tox
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.git
+.mypy_cache
+.pytest_cache
+.hypothesis
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Documentation
+*.md
+README.md
+FLASK_API_README.md
+API_SUMMARY.md
+CORRECTIONS_APPLIQUEES.md
+SETUP_COMPLETE.md
+
+# Test files
+test_*.py
+quick_test.py
+
+# Scripts
+run.sh
+start_flask.sh
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+logs/
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yml
