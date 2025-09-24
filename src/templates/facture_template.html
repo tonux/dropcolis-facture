@@ -318,7 +318,7 @@
         <!-- Header Section -->
         <div class="header">
             <div class="company-info">
-                <div class="company-name">DROPCOLIS</div>
+                <div class="company-name"><img src="{{ logo_base64 }}" alt="Dropcolis" style="width: 150px; height: auto; max-height: 100px;"></div>
             </div>
             <div class="invoice-details">
                 <div class="invoice-title">Facture n°{{ current_date }}-{{ facture_number }}</div>
@@ -396,9 +396,17 @@
                     <span>TPS 5%</span>
                     <span>{{ tps }}$</span>
                 </div>
+                <div class="estimation-row" style="font-size: 12px; font-weight: normal; margin-bottom: 5px;">
+                    <span style="margin-left: 20px;">Numéro TPS: 766231419RT0001</span>
+                    <span></span>
+                </div>
                 <div class="estimation-row">
                     <span>TVQ 9,975%</span>
                     <span>{{ tvq }}$</span>
+                </div>
+                <div class="estimation-row" style="font-size: 12px; font-weight: normal; margin-bottom: 5px;">
+                    <span style="margin-left: 20px;">Numéro TVQ: 1230329911TQ0001</span>
+                    <span></span>
                 </div>
                 <div class="grand-total">
                     <span>TOTAL. {{ grand_total }}$ TTC</span>
@@ -417,6 +425,6 @@
                 </ul>
             </div>
         </div>
-    </div>
+    </div>   
 </body>
 </html>

@@ -9,6 +9,7 @@ import requests
 import json
 import os
 import tempfile
+import base64
 from datetime import datetime, timedelta
 from jinja2 import Template
 from weasyprint import HTML, CSS
@@ -39,6 +40,29 @@ class FactureGenerator:
         # Load HTML template
         with open(self.template_path, 'r', encoding='utf-8') as f:
             self.template = Template(f.read())
+        
+        # Load and encode logo as base64
+        self.logo_base64 = self._load_logo_base64()
+    
+    def _load_logo_base64(self) -> str:
+        """
+        Load the logo image and convert it to base64 for embedding in HTML.
+        
+        Returns:
+            Base64 encoded image string or empty string if logo not found
+        """
+        try:
+            logo_path = os.path.join(os.path.dirname(self.template_path), 'logo.png')
+            if os.path.exists(logo_path):
+                with open(logo_path, 'rb') as f:
+                    logo_data = base64.b64encode(f.read()).decode('utf-8')
+                    return f'data:image/png;base64,{logo_data}'
+            else:
+                logger.warning(f"Logo file not found at {logo_path}")
+                return ''
+        except Exception as e:
+            logger.error(f"Error loading logo: {e}")
+            return ''
     
     def retrieve_factures(self, id: Optional[str] = None) -> List[Dict[str, Any]]:
         """
@@ -162,7 +186,8 @@ class FactureGenerator:
                 'tps': 0,
                 'tvq': 0,
                 'grand_total': 0,
-                'status': facture_data.get('status', 'N/A')
+                'status': facture_data.get('status', 'N/A'),
+                'logo_base64': self.logo_base64
             }
             
             # Calculate totals

@@ -1,5 +1,5 @@
 # Multi-stage Dockerfile for Flask API
-FROM python:3.11-slim as builder
+FROM python:3.11-bullseye AS builder
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -25,7 +25,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Production stage
-FROM python:3.11-slim
+FROM python:3.11-bullseye
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -56,6 +56,8 @@ WORKDIR /app
 
 # Copy application files
 COPY src/ ./src/
+COPY main.py .
+COPY launch.py .
 COPY config.json .
 COPY requirements.txt .
 
