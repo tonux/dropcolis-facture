@@ -50,7 +50,7 @@ La section client n'était pas bien affichée dans le PDF généré :
   "data": [{
     "id": "FACT-2025-001",
     "date_emission": "2025-08-23T12:00:00",
-    "date_validite": "2025-08-31T12:00:00",
+    "date_service": "2025-08-31T12:00:00",
     "client": {
       "id": "client-uuid",
       "first_name": "Happiness perfumes",

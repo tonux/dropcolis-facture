@@ -129,7 +129,7 @@ curl -X POST http://localhost:5000/api/factures/generate \
       }
     ],
     "date_emission": "2025-08-23T12:00:00",
-    "date_validite": "2025-09-22T12:00:00",
+    "date_service": "2025-09-22T12:00:00",
     "status": "A_PAYER"
   }' \
   --output facture_test.pdf

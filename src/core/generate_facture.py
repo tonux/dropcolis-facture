@@ -82,13 +82,13 @@ class FactureGenerator:
             
             if id:
                 response = requests.get(
-                    f"{self.dropcolis_api_url}/items/Factures?filter[id][_eq]={id}&fields=id,status,montant,montant_ttc,devise,mode_paiement,date_validite,date_emission,client.*,lignes.*",
+                    f"{self.dropcolis_api_url}/items/Factures?filter[id][_eq]={id}&fields=id,status,montant,montant_ttc,devise,mode_paiement,date_service,date_emission,client.*,lignes.*",
                     headers=headers,
                     timeout=30
                 )
             else:
                 response = requests.get(
-                f"{self.dropcolis_api_url}/items/Factures?filter[status][_eq]=A_PAYER&fields=id,status,montant,montant_ttc,devise,mode_paiement,date_validite,date_emission,client.*,lignes.*",
+                f"{self.dropcolis_api_url}/items/Factures?filter[status][_eq]=A_PAYER&fields=id,status,montant,montant_ttc,devise,mode_paiement,date_service,date_emission,client.*,lignes.*",
                 headers=headers,
                 timeout=30
             )
@@ -179,7 +179,7 @@ class FactureGenerator:
                 'current_date': current_date,
                 'facture_number': facture_data.get('id', facture_data.get('numero', 'N/A')),
                 'date': self.format_date(facture_data.get('date_emission')),
-                'valid_until': self.format_date(facture_data.get('date_validite')),
+                'date_service': self.format_date(facture_data.get('date_service')),
                 'client': facture_data.get('client', {}),
                 'items': facture_data.get('lignes', []),
                 'subtotal': 0,

@@ -110,7 +110,7 @@ The template expects the following variables:
 
 - `facture_number`: Invoice ID from the API
 - `date`: Invoice emission date (`date_emission`)
-- `valid_until`: Validity date (`date_validite`)
+- `date_service`: Service date (`date_service`)
 - `client_id`: Client UUID from client object
 - `client_name`: Client first name from client object
 - `client_location`: Client location from client object
@@ -134,7 +134,7 @@ The script expects the Dropcolis API to return data in this format:
       "montant_ttc": 100,
       "devise": "CAD",
       "mode_paiement": "Interact",
-      "date_validite": "2025-08-31T12:00:00",
+      "date_service": "2025-08-31T12:00:00",
       "date_emission": "2025-08-23T12:00:00",
       "client": {
         "id": "client_uuid",

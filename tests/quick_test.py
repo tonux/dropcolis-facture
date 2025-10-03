@@ -63,7 +63,7 @@ def run_quick_test():
                 current_date="2025",
                 facture_number="TEST-001",
                 date="23/08/2025",
-                valid_until="31/08/2025",
+                date_service="31/08/2025",
                 client={"first_name": "Test", "last_name": "Client", "location": "Test"},
                 items=[],
                 subtotal=0,

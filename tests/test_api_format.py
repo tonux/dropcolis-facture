@@ -19,7 +19,7 @@ def test_api_response_format():
             "montant_ttc": 100,
             "devise": "CAD",
             "mode_paiement": "Interact",
-            "date_validite": "2025-08-31T12:00:00",
+            "date_service": "2025-08-31T12:00:00",
             "date_emission": "2025-08-23T12:00:00",
             "client": {
                 "id": "4f2d0d08-eb15-44e9-b3e1-9dc41a533c67",
@@ -49,7 +49,7 @@ def test_api_response_format():
     # Extract data using the updated field mappings
     facture_number = facture_data.get('id', 'N/A')
     date = facture_data.get('date_emission', datetime.now().strftime('%d/%m/%Y'))
-    valid_until = facture_data.get('date_validite', 'N/A')
+    date_service = facture_data.get('date_service', 'N/A')
     client_id = facture_data.get('client', {}).get('id', '---------')
     client_name = facture_data.get('client', {}).get('first_name', 'N/A')
     client_location = facture_data.get('client', {}).get('location', 'N/A')
@@ -57,7 +57,7 @@ def test_api_response_format():
     
     print(f"Facture Number: {facture_number}")
     print(f"Date: {date}")
-    print(f"Valid Until: {valid_until}")
+    print(f"Service Date: {date_service}")
     print(f"Client ID: {client_id}")
     print(f"Client Name: {client_name}")
     print(f"Client Location: {client_location}")
@@ -96,7 +96,7 @@ def test_api_response_format():
         template_vars = {
             'facture_number': facture_number,
             'date': date,
-            'valid_until': valid_until,
+            'date_service': date_service,
             'client_id': client_id,
             'client_name': client_name,
             'client_location': client_location,
@@ -151,7 +151,7 @@ def test_field_mappings():
     test_data = {
         "id": "test-facture-123",
         "date_emission": "2025-08-23T12:00:00",
-        "date_validite": "2025-08-31T12:00:00",
+        "date_service": "2025-08-31T12:00:00",
         "client": {
             "id": "client-uuid-123",
             "first_name": "Test Client",
@@ -170,7 +170,7 @@ def test_field_mappings():
     fields = {
         'facture_number': test_data.get('id'),
         'date': test_data.get('date_emission'),
-        'valid_until': test_data.get('date_validite'),
+        'date_service': test_data.get('date_service'),
         'client_id': test_data.get('client', {}).get('id'),
         'client_name': test_data.get('client', {}).get('first_name'),
         'client_location': test_data.get('client', {}).get('location'),

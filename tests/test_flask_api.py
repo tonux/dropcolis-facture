@@ -53,7 +53,7 @@ def test_generate_single_facture():
             }
         ],
         "date_emission": datetime.now().isoformat(),
-        "date_validite": (datetime.now() + timedelta(days=30)).isoformat(),
+        "date_service": (datetime.now() + timedelta(days=30)).isoformat(),
         "status": "A_PAYER"
     }
     

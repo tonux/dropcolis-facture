@@ -96,7 +96,7 @@ def test_template():
         test_data = {
             'facture_number': 'TEST-001',
             'date': '01/01/2025',
-            'valid_until': '31/01/2025',
+            'date_service': '31/01/2025',
             'client_id': 'TEST123',
             'client_name': 'Test Client',
             'client_location': 'Test Location',

@@ -72,7 +72,7 @@ def generate_facture():
             }
         ],
         "date_emission": "2025-08-23T12:00:00",
-        "date_validite": "2025-08-31T12:00:00",
+        "date_service: "2025-08-31T12:00:00",
         "status": "A_PAYER"
     }
     """
@@ -85,7 +85,7 @@ def generate_facture():
             return jsonify({'error': 'No JSON data provided'}), 400
         
         # Validate required fields
-        required_fields = ['facture_id', 'client', 'items', 'date_emission', 'date_validite', 'status']
+        required_fields = ['facture_id', 'client', 'items', 'date_emission', 'date_service', 'status']
         missing_fields = [field for field in required_fields if field not in data]
         
         if missing_fields:
@@ -98,7 +98,7 @@ def generate_facture():
             'id': data['facture_id'],
             'status': data['status'],
             'date_emission': data['date_emission'],
-            'date_validite': data['date_validite'],
+            'date_service': data['date_service'],
             'client': data['client'],
             'lignes': data['items']
         }
@@ -191,7 +191,7 @@ def get_factures_status():
                 'status': facture.get('status'),
                 'client_name': facture.get('client', {}).get('first_name'),
                 'date_emission': facture.get('date_emission'),
-                'date_validite': facture.get('date_validite'),
+                'date_service': facture.get('date_service'),
                 'montant': facture.get('montant'),
                 'montant_ttc': facture.get('montant_ttc')
             })

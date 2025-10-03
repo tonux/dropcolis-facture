@@ -31,7 +31,7 @@ def test_complete_generation():
             "montant_ttc": 100,
             "devise": "CAD",
             "mode_paiement": "Interact",
-            "date_validite": "2025-08-31T12:00:00",
+            "date_service": "2025-08-31T12:00:00",
             "date_emission": "2025-08-23T12:00:00",
             "client": {
                 "id": "4f2d0d08-eb15-44e9-b3e1-9dc41a533c67",
@@ -70,22 +70,22 @@ def test_complete_generation():
         print(f"Processing facture: {facture_data.get('id')}")
         print(f"Client: {facture_data.get('client', {}).get('first_name')}")
         print(f"Date emission: {facture_data.get('date_emission')}")
-        print(f"Date validite: {facture_data.get('date_validite')}")
+        print(f"Date validite: {facture_data.get('date_service')}")
         
         # Test date formatting directly
         formatted_emission = generator.format_date(facture_data.get('date_emission'))
-        formatted_validite = generator.format_date(facture_data.get('date_validite'))
+        formatted_validite = generator.format_date(facture_data.get('date_service'))
         
         print(f"\nDate formatting test:")
         print(f"  Emission: {facture_data.get('date_emission')} -> {formatted_emission}")
-        print(f"  Validite: {facture_data.get('date_validite')} -> {formatted_validite}")
+        print(f"  Service: {facture_data.get('date_service')} -> {formatted_validite}")
         
         # Test template variable preparation
         template_vars = {
             'current_date': datetime.now().strftime('%Y'),
             'facture_number': facture_data.get('id', facture_data.get('numero', 'N/A')),
             'date': generator.format_date(facture_data.get('date_emission')),
-            'valid_until': generator.format_date(facture_data.get('date_validite')),
+            'date_service': generator.format_date(facture_data.get('date_service')),
             'client': {
                 'first_name': facture_data.get('client', {}).get('first_name', 'N/A'),
                 'last_name': facture_data.get('client', {}).get('last_name', ''),
@@ -101,7 +101,7 @@ def test_complete_generation():
         print(f"\nTemplate variables:")
         print(f"  Facture Number: {template_vars['facture_number']}")
         print(f"  Date: {template_vars['date']}")
-        print(f"  Valid Until: {template_vars['valid_until']}")
+        print(f"  Service: {template_vars['date_service']}")
         print(f"  Client Name: {template_vars['client']['first_name']}")
         print(f"  Client Location: {template_vars['client']['location']}")
         
@@ -120,9 +120,9 @@ def test_complete_generation():
                 print("✗ Formatted emission date not found in HTML")
             
             if formatted_validite in rendered_html:
-                print("✓ Formatted validite date found in HTML")
+                print("✓ Formatted service date found in HTML")
             else:
-                print("✗ Formatted validite date not found in HTML")
+                print("✗ Formatted service date not found in HTML")
             
             if template_vars['client']['first_name'] in rendered_html:
                 print("✓ Client name found in HTML")

@@ -31,7 +31,7 @@ def test_pdf_generation():
             "montant_ttc": 100,
             "devise": "CAD",
             "mode_paiement": "Interact",
-            "date_validite": "2025-08-31T12:00:00",
+            "date_service": "2025-08-31T12:00:00",
             "date_emission": "2025-08-23T12:00:00",
             "client": {
                 "id": "4f2d0d08-eb15-44e9-b3e1-9dc41a533c67",
