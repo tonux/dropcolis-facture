@@ -28,6 +28,12 @@
             margin-bottom: 30px;
         }
         
+        .left-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
         .company-info {
             display: flex;
             align-items: center;
@@ -83,11 +89,8 @@
         }
         
         .client-service-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
             margin-bottom: 0px;
-            border-bottom: 1px solid #e5e7eb;
+            /* border-bottom: 1px solid #e5e7eb; */
             padding-bottom: 0px;
         }
         
@@ -100,7 +103,7 @@
         .client-line {
             display: flex;
             justify-content: space-between;
-            border-bottom: 1px solid #d1d5db;
+            /* border-bottom: 1px solid #d1d5db; */
             padding: 8px 0;
             align-items: center;
         }
@@ -317,8 +320,22 @@
     <div class="invoice-container">
         <!-- Header Section -->
         <div class="header">
-            <div class="company-info">
-                <div class="company-name"><img src="{{ logo_base64 }}" alt="Dropcolis" style="width: 150px; height: auto; max-height: 100px;"></div>
+            <div class="left-section">
+                <div class="company-info">
+                    <div class="company-name"><img src="{{ logo_base64 }}" alt="Dropcolis" style="width: 150px; height: auto; max-height: 100px;"></div>
+                </div>
+                <div class="client-details">
+                    <div class="client-line">
+                        <span class="client-label">Date</span>
+                        <span class="client-value">{{ date }}</span>
+                    </div>
+                    <div class="client-line">
+                        <span class="client-label">Date de service</span>
+                        <span class="client-value">{{ date_service }}</span>
+                    </div>
+                    <div class="client-name">{{ client.first_name }} {{ client.last_name }}</div>
+                    <div class="client-location">Localisation: {{ client.location }}</div>
+                </div>
             </div>
             <div class="invoice-details">
                 <div class="invoice-title">Facture n°{{ current_date }}-{{ facture_number }}</div>
@@ -338,22 +355,6 @@
                     services clients<br>
                     1 888 458 6998
                 </div>
-            </div>
-        </div>
-        
-        <!-- Client and Service Section -->
-        <div class="client-service-section">
-            <div class="client-details">
-                <div class="client-line">
-                    <span class="client-label">Date</span>
-                    <span class="client-value">{{ date }}</span>
-                </div>
-                <div class="client-line">
-                    <span class="client-label">Date de service</span>
-                    <span class="client-value">{{ date_service }}</span>
-                </div>
-                <div class="client-name">{{ client.first_name }} {{ client.last_name }}</div>
-                <div class="client-location">Localisation: {{ client.location }}</div>
             </div>
         </div>
         
@@ -389,7 +390,7 @@
             <h4>Estimation</h4>
             <div class="estimation-summary">
                 <div class="estimation-row">
-                    <span>TOTAL.</span>
+                    <span>SOUS TOTAL</span>
                     <span>{{ subtotal }}$</span>
                 </div>
                 <div class="estimation-row">
@@ -409,19 +410,18 @@
                     <span></span>
                 </div>
                 <div class="grand-total">
-                    <span>TOTAL. {{ grand_total }}$ TTC</span>
+                    <span>TOTAL: {{ grand_total }}$ TTC</span>
                 </div>
             </div>
         </div>
         
         <!-- Payment Section -->
         <div class="payment-section">
-            <h4>Montant à payer</h4>
             <div class="payment-conditions">
                 <h5>Conditions de paiement :</h5>
                 <ul>
                     <li>La facture est estimé en dollars canadien</li>
-                    <li>Le solde sera payable à la fin des services par interac à interac@dropcolis.ca ou paiement en ligne.</li>
+                    <li>Le solde sera payable à la fin des services par interac à <span style="font-weight: bold;">info@dropcolis.ca</span> ou paiement en ligne.</li>
                 </ul>
             </div>
         </div>
